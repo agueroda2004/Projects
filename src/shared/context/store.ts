@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
-import type { AppState, Bug, Module, Project, SubTask, Task, Test } from "@/shared/types";
+import type { AppState, Bug, Module, Project, SubTask, SubTest, Task, Test } from "@/shared/types";
 
 export type ProjectInput = Omit<Project, "id" | "createdAt" | "order">;
 export type ModuleInput = Omit<Module, "id" | "createdAt" | "order">;
 export type TaskInput = Omit<Task, "id" | "createdAt" | "order" | "subtasks">;
-export type TestInput = Omit<Test, "id" | "createdAt" | "order">;
+export type TestInput = Omit<Test, "id" | "createdAt" | "order" | "subtests">;
 export type BugInput = Omit<Bug, "id" | "createdAt" | "order">;
 
 export type StoreContextValue = AppState & {
@@ -36,6 +36,10 @@ export type StoreContextValue = AppState & {
   deleteTest: (id: string) => void;
   advanceTest: (id: string) => void;
   reorderTests: (activeId: string, overId: string) => void;
+
+  addSubTest: (testId: string, name: string) => void;
+  updateSubTest: (testId: string, subtestId: string, data: Partial<Omit<SubTest, "id" | "order">>) => void;
+  deleteSubTest: (testId: string, subtestId: string) => void;
 
   createBug: (data: BugInput) => void;
   updateBug: (id: string, data: Partial<BugInput>) => void;

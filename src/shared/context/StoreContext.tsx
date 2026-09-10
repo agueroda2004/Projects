@@ -15,7 +15,12 @@ function loadInitialState(): AppState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as AppState;
-      if (parsed && Array.isArray(parsed.projects)) return parsed;
+      if (parsed && Array.isArray(parsed.projects)) {
+        return {
+          ...parsed,
+          tests: (parsed.tests ?? []).map((t) => ({ ...t, subtests: t.subtests ?? [] })),
+        };
+      }
     }
   } catch {
     // ignore corrupted storage
@@ -190,7 +195,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           const siblings = prev.tests.filter((t) => t.moduleId === data.moduleId);
           return {
             ...prev,
-            tests: [...prev.tests, { ...data, id: uid(), createdAt: new Date().toISOString(), order: siblings.length }],
+            tests: [...prev.tests, { ...data, id: uid(), subtests: [], createdAt: new Date().toISOString(), order: siblings.length }],
           };
         }),
 
@@ -218,6 +223,34 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setState((prev) => ({
           ...prev,
           tests: reorderById(prev.tests, activeId, overId),
+        })),
+
+      addSubTest: (testId, name) =>
+        setState((prev) => ({
+          ...prev,
+          tests: prev.tests.map((t) =>
+            t.id === testId
+              ? { ...t, subtests: [...t.subtests, { id: uid(), name, notes: "", status: "pending", order: t.subtests.length }] }
+              : t,
+          ),
+        })),
+
+      updateSubTest: (testId, subtestId, data) =>
+        setState((prev) => ({
+          ...prev,
+          tests: prev.tests.map((t) =>
+            t.id === testId
+              ? { ...t, subtests: t.subtests.map((s) => (s.id === subtestId ? { ...s, ...data } : s)) }
+              : t,
+          ),
+        })),
+
+      deleteSubTest: (testId, subtestId) =>
+        setState((prev) => ({
+          ...prev,
+          tests: prev.tests.map((t) =>
+            t.id === testId ? { ...t, subtests: t.subtests.filter((s) => s.id !== subtestId) } : t,
+          ),
         })),
 
       createBug: (data) =>

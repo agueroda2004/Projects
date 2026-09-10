@@ -15,12 +15,21 @@ type DropdownProps = {
   options: DropdownOption[];
   placeholder?: string;
   className?: string;
+  size?: "sm" | "md";
 };
 
-export default function Dropdown({ value, onChange, options, placeholder = "Select...", className = "" }: DropdownProps) {
+export default function Dropdown({
+  value,
+  onChange,
+  options,
+  placeholder = "Select...",
+  className = "",
+  size = "md",
+}: DropdownProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const selected = options.find((o) => o.value === value);
+  const isSmall = size === "sm";
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -35,20 +44,22 @@ export default function Dropdown({ value, onChange, options, placeholder = "Sele
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex h-11 w-full items-center justify-between gap-2 rounded-xl border-2 border-zinc-200 bg-white px-4 text-sm outline-none transition hover:border-zinc-300 focus:border-duo-green"
+        className={`flex w-full items-center justify-between gap-2 rounded-xl border-2 border-zinc-200 bg-white outline-none transition hover:border-zinc-300 focus:border-duo-green ${
+          isSmall ? "h-8 px-3 text-xs" : "h-11 px-4 text-sm"
+        }`}
       >
         {selected ? (
           <span className="flex min-w-0 items-center gap-2 font-semibold text-zinc-800">
             {selected.icon && (() => {
               const Icon = getIcon(selected.icon!);
-              return <Icon className="h-4 w-4 shrink-0" style={{ color: selected.color }} />;
+              return <Icon className={`shrink-0 ${isSmall ? "h-3.5 w-3.5" : "h-4 w-4"}`} style={{ color: selected.color }} />;
             })()}
             <span className="truncate">{selected.label}</span>
           </span>
         ) : (
           <span className="text-zinc-400">{placeholder}</span>
         )}
-        <ChevronDown className={`h-4 w-4 shrink-0 text-zinc-400 transition ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`shrink-0 text-zinc-400 transition ${open ? "rotate-180" : ""} ${isSmall ? "h-3.5 w-3.5" : "h-4 w-4"}`} />
       </button>
 
       {open && (

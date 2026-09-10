@@ -50,12 +50,21 @@ export interface Task {
   order: number;
 }
 
+export interface SubTest {
+  id: string;
+  name: string;
+  notes: string;
+  status: TestStatus;
+  order: number;
+}
+
 export interface Test {
   id: string;
   moduleId: string;
   name: string;
   description: string;
   status: TestStatus;
+  subtests: SubTest[];
   createdAt: string;
   order: number;
 }
