@@ -21,6 +21,7 @@ export default function TestItem({ test, onEdit, onDelete }: Props) {
   const { attributes, listeners, setNodeRef, style, isDragging } = useSortableItem(test.id);
   const [newSub, setNewSub] = useState("");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [subtestsOpen, setSubtestsOpen] = useState(false);
   const status = TEST_STATUSES[test.status];
   const isPassed = test.status === "passed";
   const subtests = test.subtests ?? [];
@@ -47,6 +48,20 @@ export default function TestItem({ test, onEdit, onDelete }: Props) {
         >
           <GripVertical className="h-4 w-4" />
         </button>
+
+        {subtests.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setSubtestsOpen((o) => !o)}
+            title={subtestsOpen ? "Collapse subtests" : "Expand subtests"}
+            aria-label={subtestsOpen ? "Collapse subtests" : "Expand subtests"}
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${
+              subtestsOpen ? "bg-duo-green-light text-duo-green" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+            }`}
+          >
+            <ChevronDown className={`h-4 w-4 transition ${subtestsOpen ? "" : "-rotate-90"}`} />
+          </button>
+        )}
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -100,88 +115,92 @@ export default function TestItem({ test, onEdit, onDelete }: Props) {
         </button>
       </div>
 
-      {subtests.length > 0 && (
-        <div className="space-y-1.5 border-t border-zinc-100 px-3 py-2">
-          {subtests.map((sub) => {
-            const isExpanded = expanded === sub.id;
-            const subStatus = TEST_STATUSES[sub.status];
-            return (
-              <div key={sub.id} className="rounded-xl border border-zinc-100 bg-zinc-50/60">
-                <div className="flex items-center gap-2 px-2 py-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(isExpanded ? null : sub.id)}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-200/60 hover:text-zinc-600"
-                    aria-label={isExpanded ? "Collapse subtest" : "Expand subtest"}
-                  >
-                    <ChevronDown className={`h-3.5 w-3.5 transition ${isExpanded ? "" : "-rotate-90"}`} />
-                  </button>
+      {subtestsOpen && (
+        <>
+          {subtests.length > 0 && (
+            <div className="space-y-1.5 border-t border-zinc-100 px-3 py-2">
+              {subtests.map((sub) => {
+                const isExpanded = expanded === sub.id;
+                const subStatus = TEST_STATUSES[sub.status];
+                return (
+                  <div key={sub.id} className="rounded-xl border border-zinc-100 bg-zinc-50/60">
+                    <div className="flex items-center gap-2 px-2 py-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setExpanded(isExpanded ? null : sub.id)}
+                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-200/60 hover:text-zinc-600"
+                        aria-label={isExpanded ? "Collapse subtest" : "Expand subtest"}
+                      >
+                        <ChevronDown className={`h-3.5 w-3.5 transition ${isExpanded ? "" : "-rotate-90"}`} />
+                      </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setExpanded(isExpanded ? null : sub.id)}
-                    className="flex min-w-0 flex-1 items-center gap-2 text-left"
-                  >
-                    <span
-                      className={`truncate text-xs font-semibold ${
-                        sub.status === "passed" ? "text-zinc-400 line-through" : "text-zinc-700"
-                      }`}
-                    >
-                      {sub.name}
-                    </span>
-                    {sub.notes.trim() && <StickyNote className="h-3 w-3 shrink-0 text-zinc-300" />}
-                  </button>
+                      <button
+                        type="button"
+                        onClick={() => setExpanded(isExpanded ? null : sub.id)}
+                        className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                      >
+                        <span
+                          className={`truncate text-xs font-semibold ${
+                            sub.status === "passed" ? "text-zinc-400 line-through" : "text-zinc-700"
+                          }`}
+                        >
+                          {sub.name}
+                        </span>
+                        {sub.notes.trim() && <StickyNote className="h-3 w-3 shrink-0 text-zinc-300" />}
+                      </button>
 
-                  <Dropdown
-                    value={sub.status}
-                    onChange={(value) => updateSubTest(test.id, sub.id, { status: value as Test["status"] })}
-                    options={STATUS_OPTIONS}
-                    size="sm"
-                    className="w-28 shrink-0"
-                  />
+                      <Dropdown
+                        value={sub.status}
+                        onChange={(value) => updateSubTest(test.id, sub.id, { status: value as Test["status"] })}
+                        options={STATUS_OPTIONS}
+                        size="sm"
+                        className="w-28 shrink-0"
+                      />
 
-                  <button
-                    type="button"
-                    onClick={() => deleteSubTest(test.id, sub.id)}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-300 transition hover:bg-red-50 hover:text-red-500"
-                    aria-label="Delete subtest"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+                      <button
+                        type="button"
+                        onClick={() => deleteSubTest(test.id, sub.id)}
+                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-300 transition hover:bg-red-50 hover:text-red-500"
+                        aria-label="Delete subtest"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
 
-                {isExpanded && (
-                  <div className="border-t border-zinc-100 px-3 py-2">
-                    <Textarea
-                      rows={3}
-                      value={sub.notes}
-                      onChange={(e) => updateSubTest(test.id, sub.id, { notes: e.target.value })}
-                      placeholder="Add notes for this subtest..."
-                      className="text-xs"
-                    />
-                    <p className="mt-1 text-[10px] font-medium text-zinc-400">
-                      {subStatus.label} · Notes are saved automatically
-                    </p>
+                    {isExpanded && (
+                      <div className="border-t border-zinc-100 px-3 py-2">
+                        <Textarea
+                          rows={3}
+                          value={sub.notes}
+                          onChange={(e) => updateSubTest(test.id, sub.id, { notes: e.target.value })}
+                          placeholder="Add notes for this subtest..."
+                          className="text-xs"
+                        />
+                        <p className="mt-1 text-[10px] font-medium text-zinc-400">
+                          {subStatus.label} · Notes are saved automatically
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+                );
+              })}
+            </div>
+          )}
 
-      <div className="flex items-center gap-2 border-t border-zinc-100 px-5 py-2">
-        <Plus className="h-4 w-4 shrink-0 text-zinc-300" />
-        <input
-          value={newSub}
-          onChange={(e) => setNewSub(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleAddSub();
-          }}
-          placeholder="Add a subtest..."
-          className="flex-1 bg-transparent text-xs font-medium text-zinc-600 outline-none placeholder:text-zinc-400"
-        />
-      </div>
+          <div className="flex items-center gap-2 border-t border-zinc-100 px-5 py-2">
+            <Plus className="h-4 w-4 shrink-0 text-zinc-300" />
+            <input
+              value={newSub}
+              onChange={(e) => setNewSub(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleAddSub();
+              }}
+              placeholder="Add a subtest..."
+              className="flex-1 bg-transparent text-xs font-medium text-zinc-600 outline-none placeholder:text-zinc-400"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
