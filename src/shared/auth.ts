@@ -1,17 +1,23 @@
-const SESSION_KEY = "pm-session";
+const SESSION_KEY = "pm-session-v2";
 
 export function isAuthenticated(): boolean {
   return localStorage.getItem(SESSION_KEY) === "1";
 }
 
-export function authenticate(username: string, password: string): boolean {
-  const expectedUsername = import.meta.env.VITE_APP_USERNAME;
-  const expectedPassword = import.meta.env.VITE_APP_PASSWORD;
+export async function login(username: string, password: string): Promise<boolean> {
+  const response = await fetch("/api/auth", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
 
-  const usernameOk = !expectedUsername || username.trim() === String(expectedUsername);
-  const passwordOk = password === expectedPassword;
+  if (!response.ok) return false;
 
-  if (usernameOk && passwordOk) {
+  const data = (await response.json().catch(() => ({ ok: false }))) as {
+    ok?: boolean;
+  };
+
+  if (data.ok) {
     localStorage.setItem(SESSION_KEY, "1");
     return true;
   }
