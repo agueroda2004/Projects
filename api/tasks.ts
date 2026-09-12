@@ -72,7 +72,7 @@ function toTask(r: typeof tasks.$inferSelect) {
     moduleId: r.moduleId,
     name: r.name,
     status: r.status,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }

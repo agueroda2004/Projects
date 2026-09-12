@@ -47,7 +47,7 @@ function toProject(r: typeof projects.$inferSelect) {
     color: r.color,
     startDate: r.startDate,
     endDate: r.endDate,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }

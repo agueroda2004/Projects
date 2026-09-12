@@ -53,7 +53,7 @@ function toProject(r: typeof projects.$inferSelect) {
     color: r.color,
     startDate: r.startDate,
     endDate: r.endDate,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }
@@ -68,7 +68,7 @@ function toModule(r: typeof modules.$inferSelect) {
     color: r.color,
     priority: r.priority,
     status: r.status,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }
@@ -79,7 +79,7 @@ function toTask(r: typeof tasks.$inferSelect) {
     moduleId: r.moduleId,
     name: r.name,
     status: r.status,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }
@@ -91,7 +91,7 @@ function toTest(r: typeof tests.$inferSelect) {
     name: r.name,
     description: r.description,
     status: r.status,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }
@@ -104,7 +104,7 @@ function toBug(r: typeof bugs.$inferSelect) {
     description: r.description,
     status: r.status,
     appearedAt: r.appearedAt,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }

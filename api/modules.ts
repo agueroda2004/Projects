@@ -48,7 +48,7 @@ function toModule(r: typeof modules.$inferSelect) {
     color: r.color,
     priority: r.priority,
     status: r.status,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }

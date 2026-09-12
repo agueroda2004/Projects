@@ -44,7 +44,7 @@ function toBug(r: typeof bugs.$inferSelect) {
     description: r.description,
     status: r.status,
     appearedAt: r.appearedAt,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }

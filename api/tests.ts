@@ -73,7 +73,7 @@ function toTest(r: typeof tests.$inferSelect) {
     name: r.name,
     description: r.description,
     status: r.status,
-    createdAt: r.createdAt.toISOString(),
+    createdAt: r.createdAt,
     order: r.order,
   };
 }
