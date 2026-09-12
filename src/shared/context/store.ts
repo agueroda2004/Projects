@@ -8,6 +8,7 @@ export type TestInput = Omit<Test, "id" | "createdAt" | "order" | "subtests">;
 export type BugInput = Omit<Bug, "id" | "createdAt" | "order">;
 
 export type StoreContextValue = AppState & {
+  loading: boolean;
   resetData: () => void;
 
   createProject: (data: ProjectInput) => void;

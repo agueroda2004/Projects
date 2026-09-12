@@ -1,5 +1,6 @@
-﻿import { Boxes, Folder, RotateCcw } from "lucide-react";
+﻿import { Boxes, Folder, LogOut, RotateCcw } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { logout } from "@/shared/auth";
 import { useStore } from "@/shared/context/store";
 import { showToast } from "@/shared/ui/toast";
 
@@ -47,6 +48,17 @@ export default function Sidebar() {
         >
           <RotateCcw className="h-4 w-4" />
           Reset demo data
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            navigate("/login");
+          }}
+          className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600"
+        >
+          <LogOut className="h-4 w-4" />
+          Log out
         </button>
       </div>
     </aside>

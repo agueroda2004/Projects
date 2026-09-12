@@ -1,0 +1,118 @@
+import { db } from "../lib/db";
+import { bugs, modules, projects, subtasks, subtests, tasks, tests } from "./schema";
+
+async function seed() {
+  console.log("Seeding pm schema...");
+
+  await db.delete(bugs);
+  await db.delete(subtests);
+  await db.delete(tests);
+  await db.delete(subtasks);
+  await db.delete(tasks);
+  await db.delete(modules);
+  await db.delete(projects);
+
+  await db.insert(projects).values([
+    {
+      id: "p1",
+      name: "Orbit CRM",
+      description: "Customer relationship platform with billing, reporting and a customer portal.",
+      icon: "Folder",
+      color: "#16a34a",
+      startDate: "2026-01-05",
+      endDate: "2026-06-30",
+      createdAt: "2026-01-05T09:00:00.000Z",
+      order: 0,
+    },
+    {
+      id: "p2",
+      name: "TaskFlow Mobile",
+      description: "Native companion app for tracking tasks on the go.",
+      icon: "Package",
+      color: "#0ea5e9",
+      startDate: "2026-02-01",
+      endDate: "2026-08-15",
+      createdAt: "2026-02-01T09:00:00.000Z",
+      order: 1,
+    },
+    {
+      id: "p3",
+      name: "DataPulse Analytics",
+      description: "Real-time analytics dashboards and event pipeline.",
+      icon: "Circle",
+      color: "#ec4899",
+      startDate: "2026-03-10",
+      endDate: "2026-09-01",
+      createdAt: "2026-03-10T09:00:00.000Z",
+      order: 2,
+    },
+  ]);
+
+  await db.insert(modules).values([
+    { id: "m1", projectId: "p1", name: "Customer Portal", description: "Self-service area where customers manage accounts and invoices.", icon: "Package", color: "#3b82f6", priority: "high", status: "planning", createdAt: "2026-01-06T09:00:00.000Z", order: 0 },
+    { id: "m2", projectId: "p1", name: "Billing Engine", description: "Invoicing, payment processing and webhook handling.", icon: "Settings", color: "#f97316", priority: "urgent", status: "development", createdAt: "2026-01-06T10:00:00.000Z", order: 1 },
+    { id: "m3", projectId: "p1", name: "Reporting Dashboard", description: "Charts and exports for sales and usage analytics.", icon: "ListTodo", color: "#8b5cf6", priority: "medium", status: "testing", createdAt: "2026-01-07T10:00:00.000Z", order: 2 },
+    { id: "m4", projectId: "p2", name: "Onboarding Flow", description: "Welcome screens and profile setup for the mobile app.", icon: "Flag", color: "#22c55e", priority: "low", status: "production", createdAt: "2026-02-02T10:00:00.000Z", order: 0 },
+    { id: "m5", projectId: "p2", name: "Push Notifications", description: "Local and remote notifications for task reminders.", icon: "AlertTriangle", color: "#8b5cf6", priority: "medium", status: "development", createdAt: "2026-02-05T10:00:00.000Z", order: 1 },
+    { id: "m6", projectId: "p3", name: "Event Pipeline", description: "Ingestion, transformation and storage of analytics events.", icon: "Folder", color: "#0f172a", priority: "medium", status: "planning", createdAt: "2026-03-11T10:00:00.000Z", order: 0 },
+    { id: "m7", projectId: "p3", name: "Live Dashboards", description: "Real-time widgets for the analytics console.", icon: "Circle", color: "#ef4444", priority: "high", status: "testing", createdAt: "2026-03-12T10:00:00.000Z", order: 1 },
+  ]);
+
+  await db.insert(tasks).values([
+    { id: "t1", moduleId: "m1", name: "Design login flow", status: "pending", createdAt: "2026-01-08T10:00:00.000Z", order: 0 },
+    { id: "t2", moduleId: "m1", name: "Implement auth API", status: "working", createdAt: "2026-01-09T10:00:00.000Z", order: 1 },
+    { id: "t3", moduleId: "m1", name: "Write E2E tests", status: "done", createdAt: "2026-01-10T10:00:00.000Z", order: 2 },
+    { id: "t4", moduleId: "m2", name: "Invoice generation service", status: "working", createdAt: "2026-01-12T10:00:00.000Z", order: 0 },
+    { id: "t5", moduleId: "m2", name: "Payment webhooks", status: "pending", createdAt: "2026-01-13T10:00:00.000Z", order: 1 },
+    { id: "t6", moduleId: "m3", name: "Chart components", status: "done", createdAt: "2026-01-14T10:00:00.000Z", order: 0 },
+    { id: "t7", moduleId: "m3", name: "PDF export", status: "working", createdAt: "2026-01-15T10:00:00.000Z", order: 1 },
+    { id: "t8", moduleId: "m4", name: "Welcome screens", status: "done", createdAt: "2026-02-03T10:00:00.000Z", order: 0 },
+    { id: "t9", moduleId: "m5", name: "Notification scheduler", status: "working", createdAt: "2026-02-06T10:00:00.000Z", order: 0 },
+    { id: "t10", moduleId: "m6", name: "Event schema design", status: "pending", createdAt: "2026-03-13T10:00:00.000Z", order: 0 },
+    { id: "t11", moduleId: "m7", name: "Real-time widgets", status: "working", createdAt: "2026-03-14T10:00:00.000Z", order: 0 },
+  ]);
+
+  await db.insert(subtasks).values([
+    { id: "s1", taskId: "t2", name: "Token refresh endpoint", done: true, order: 0 },
+    { id: "s2", taskId: "t2", name: "Session invalidation", done: false, order: 1 },
+    { id: "s3", taskId: "t3", name: "Happy path", done: true, order: 0 },
+    { id: "s4", taskId: "t3", name: "Wrong password", done: true, order: 1 },
+    { id: "s5", taskId: "t4", name: "PDF template", done: true, order: 0 },
+    { id: "s6", taskId: "t4", name: "Currency formatting", done: false, order: 1 },
+    { id: "s7", taskId: "t7", name: "Table layout", done: true, order: 0 },
+  ]);
+
+  await db.insert(tests).values([
+    { id: "te1", moduleId: "m1", name: "Auth flow test", description: "Validates login, refresh and logout cycles.", status: "failed", createdAt: "2026-01-11T10:00:00.000Z", order: 0 },
+    { id: "te2", moduleId: "m2", name: "Invoice totals", description: "Verifies subtotal, tax and total calculation.", status: "pending", createdAt: "2026-01-16T10:00:00.000Z", order: 0 },
+    { id: "te3", moduleId: "m2", name: "Refund flow", description: "Ensures refunds reverse charges correctly.", status: "failed", createdAt: "2026-01-17T10:00:00.000Z", order: 1 },
+    { id: "te4", moduleId: "m3", name: "Report accuracy", description: "Compares exported numbers against the database.", status: "passed", createdAt: "2026-01-18T10:00:00.000Z", order: 0 },
+    { id: "te5", moduleId: "m7", name: "Widget latency", description: "Checks that widgets update under 500ms.", status: "pending", createdAt: "2026-03-15T10:00:00.000Z", order: 0 },
+  ]);
+
+  await db.insert(subtests).values([
+    { id: "st1", testId: "te1", name: "Login with valid credentials", notes: "Session cookie is set correctly, but refresh token is missing on Safari.", status: "passed", order: 0 },
+    { id: "st2", testId: "te1", name: "Token refresh after expiry", notes: "Fails intermittently when the token expires mid-request.", status: "failed", order: 1 },
+    { id: "st3", testId: "te1", name: "Logout invalidates session", notes: "", status: "pending", order: 2 },
+    { id: "st4", testId: "te2", name: "Subtotal sums line items", notes: "Covered with rounding to 2 decimals.", status: "passed", order: 0 },
+    { id: "st5", testId: "te2", name: "Tax applied per region", notes: "Pending EU VAT rules.", status: "pending", order: 1 },
+  ]);
+
+  await db.insert(bugs).values([
+    { id: "b1", moduleId: "m1", name: "Login redirect loop", description: "Users get bounced back after successful sign in.", status: "open", appearedAt: "2026-02-10", createdAt: "2026-02-10T12:00:00.000Z", order: 0 },
+    { id: "b2", moduleId: "m2", name: "Duplicate invoices", description: "Retrying a payment creates a second invoice.", status: "fixing", appearedAt: "2026-02-12", createdAt: "2026-02-12T12:00:00.000Z", order: 0 },
+    { id: "b3", moduleId: "m3", name: "Timezone off-by-one", description: "Report dates shift by one day in UTC+2.", status: "closed", appearedAt: "2026-02-14", createdAt: "2026-02-14T12:00:00.000Z", order: 0 },
+    { id: "b4", moduleId: "m5", name: "Reminder fires twice", description: "Notification scheduler triggers duplicate alerts.", status: "open", appearedAt: "2026-02-20", createdAt: "2026-02-20T12:00:00.000Z", order: 0 },
+  ]);
+
+  console.log("Seed complete.");
+}
+
+seed()
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  })
+  .finally(() => {
+    // Neon HTTP driver doesn't hold a persistent pool; nothing to close.
+  });
