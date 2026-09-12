@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "../lib/db";
+import { withErrors } from "../lib/http";
 import { bugs } from "../db/schema";
 
 export const config = { runtime: "edge" };
 
-export default async function handler(req: Request) {
+export default withErrors(async function handler(req: Request) {
   const { method } = req;
   const body = await req.json().catch(() => ({}));
 
@@ -21,11 +22,9 @@ export default async function handler(req: Request) {
   }
 
   if (method === "PUT") {
-    await db.transaction(async (tx) => {
-      for (const item of body.items ?? []) {
-        await tx.update(bugs).set({ order: item.order }).where(eq(bugs.id, item.id));
-      }
-    });
+    for (const item of body.items ?? []) {
+      await db.update(bugs).set({ order: item.order }).where(eq(bugs.id, item.id));
+    }
     return Response.json({ ok: true });
   }
 
@@ -35,7 +34,7 @@ export default async function handler(req: Request) {
   }
 
   return Response.json({ error: "Method not allowed" }, { status: 405 });
-}
+});
 
 function toBug(r: typeof bugs.$inferSelect) {
   return {

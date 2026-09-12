@@ -1,9 +1,10 @@
 import { db } from "../lib/db";
+import { withErrors } from "../lib/http";
 import { bugs, modules, projects, subtasks, subtests, tasks, tests } from "../db/schema";
 
 export const config = { runtime: "edge" };
 
-export default async function GET() {
+export default withErrors(async function GET() {
   const [projectRows, moduleRows, taskRows, subtaskRows, testRows, subtestRows, bugRows] =
     await Promise.all([
       db.select().from(projects),
@@ -41,7 +42,7 @@ export default async function GET() {
   };
 
   return Response.json(state);
-}
+});
 
 function toProject(r: typeof projects.$inferSelect) {
   return {

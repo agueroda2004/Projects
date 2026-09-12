@@ -17,7 +17,15 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
   });
   if (!res.ok) {
-    throw new Error(`API error ${res.status}: ${res.statusText}`);
+    let message = `API error ${res.status}: ${res.statusText}`;
+    try {
+      const data = (await res.json()) as { error?: string };
+      if (data?.error) message = `${message} - ${data.error}`;
+    } catch {
+      // ignore parse errors, keep status fallback
+    }
+    console.error(`[api] ${init?.method ?? "GET"} ${path}`, message);
+    throw new Error(message);
   }
   return res.json() as Promise<T>;
 }

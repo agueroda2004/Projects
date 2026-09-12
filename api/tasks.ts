@@ -1,10 +1,11 @@
 import { eq } from "drizzle-orm";
 import { db } from "../lib/db";
+import { withErrors } from "../lib/http";
 import { subtasks, tasks } from "../db/schema";
 
 export const config = { runtime: "edge" };
 
-export default async function handler(req: Request) {
+export default withErrors(async function handler(req: Request) {
   const { method } = req;
   const body = await req.json().catch(() => ({}));
 
@@ -29,11 +30,9 @@ export default async function handler(req: Request) {
   }
 
   if (body.action === "reorderSubTasks") {
-    await db.transaction(async (tx) => {
-      for (const item of body.items ?? []) {
-        await tx.update(subtasks).set({ order: item.order }).where(eq(subtasks.id, item.id));
-      }
-    });
+    for (const item of body.items ?? []) {
+      await db.update(subtasks).set({ order: item.order }).where(eq(subtasks.id, item.id));
+    }
     return Response.json({ ok: true });
   }
 
@@ -53,11 +52,9 @@ export default async function handler(req: Request) {
   }
 
   if (method === "PUT") {
-    await db.transaction(async (tx) => {
-      for (const item of body.items ?? []) {
-        await tx.update(tasks).set({ order: item.order }).where(eq(tasks.id, item.id));
-      }
-    });
+    for (const item of body.items ?? []) {
+      await db.update(tasks).set({ order: item.order }).where(eq(tasks.id, item.id));
+    }
     return Response.json({ ok: true });
   }
 
@@ -67,7 +64,7 @@ export default async function handler(req: Request) {
   }
 
   return Response.json({ error: "Method not allowed" }, { status: 405 });
-}
+});
 
 function toTask(r: typeof tasks.$inferSelect) {
   return {
