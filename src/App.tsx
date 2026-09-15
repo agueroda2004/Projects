@@ -12,7 +12,7 @@ export default function App() {
     <HashRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route
+<Route
           element={
             <AuthGuard>
               <StoreProvider>

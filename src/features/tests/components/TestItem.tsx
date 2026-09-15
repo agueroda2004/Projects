@@ -49,19 +49,21 @@ export default function TestItem({ test, onEdit, onDelete }: Props) {
           <GripVertical className="h-4 w-4" />
         </button>
 
-        {subtests.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setSubtestsOpen((o) => !o)}
-            title={subtestsOpen ? "Collapse subtests" : "Expand subtests"}
-            aria-label={subtestsOpen ? "Collapse subtests" : "Expand subtests"}
-            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${
-              subtestsOpen ? "bg-duo-green-light text-duo-green" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
-            }`}
-          >
+        <button
+          type="button"
+          onClick={() => setSubtestsOpen((o) => !o)}
+          title={subtestsOpen ? "Collapse subtests" : subtests.length > 0 ? "Expand subtests" : "Add subtests"}
+          aria-label={subtestsOpen ? "Collapse subtests" : subtests.length > 0 ? "Expand subtests" : "Add subtests"}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition ${
+            subtestsOpen ? "bg-duo-green-light text-duo-green" : "text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"
+          }`}
+        >
+          {subtests.length === 0 && !subtestsOpen ? (
+            <Plus className="h-4 w-4" />
+          ) : (
             <ChevronDown className={`h-4 w-4 transition ${subtestsOpen ? "" : "-rotate-90"}`} />
-          </button>
-        )}
+          )}
+        </button>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
